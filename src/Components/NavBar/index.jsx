@@ -3,15 +3,19 @@ import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import {
   Box,
-  Button,
   FormControl,
   Toolbar,
   InputBase,
   InputLabel,
   Select,
   MenuItem,
+  useMediaQuery,
+  IconButton,
+  Menu
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import SortIcon from "@mui/icons-material/Sort";
+import { useTheme } from "@mui/material/styles";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -53,52 +57,110 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function PrimarySearchAppBar() {
+export const sortItemList = [
+  { index: "None", value: "none" },
+  { index: "Episode", value: "episode_id" },
+  { index: "Release Date", value: "release_date" },
+  { index: "Title A-Z", value: "title" },
+  { index: "Title Z-A", value: "desc" },
+];
+
+export default function PrimarySearchAppBar({ selectSort, setSelectSort, setSearchQuery }) {
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down("md"));
+
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const mobileMenuId = "primary-search-account-menu-mobile";
+    const handleMobileMenuOpen = (event) => {
+      setMobileMoreAnchorEl(event.currentTarget);
+  };
+    const handleMobileMenuClose = () => {
+      setMobileMoreAnchorEl(null);
+    };
+    const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+   const renderMobileMenu = (
+     <Menu
+       anchorEl={mobileMoreAnchorEl}
+       anchorOrigin={{
+         vertical: "top",
+         horizontal: "right",
+       }}
+       id={mobileMenuId}
+       keepMounted
+       transformOrigin={{
+         vertical: "top",
+         horizontal: "right",
+       }}
+       open={isMobileMenuOpen}
+       onClose={handleMobileMenuClose}
+     >
+       {sortItemList.map((value, key) => (
+         <MenuItem
+           onClick={(event) => setSelectSort(value.value)}
+         >
+           <p>{value.index}</p>
+         </MenuItem>
+       ))}
+     </Menu>
+   );
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ backgroundColor: "#333536" }}>
         <Toolbar>
-          {/* <Button
-            variant="filled"
-            // component="label"
-            size='large'
-            sx={{
-              color: "white",
-              backgroundColor: "rgba(255, 255, 255, 0.15)",
-              width:'15%'
-            }}
-          >
-            SORT BY
-          </Button> */}
-          <FormControl
-            sx={{
-              m: 1,
-              minWidth: "15%",
-              backgroundColor: "rgba(255, 255, 255, 0.15)",
-            }}
-          >
-            <InputLabel
-              sx={{ color: "white" }}
-              id="demo-simple-select-helper-label"
+          {!matches && (
+            <FormControl
+              sx={{
+                m: 1,
+                minWidth: "15%",
+                backgroundColor: "rgba(255, 255, 255, 0.15)",
+                maxHeight: "45px",
+                color: "white",
+                ".css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input":
+                  {
+                    padding: "6px",
+                    backgroundColor: "none",
+                    border: "none",
+                  },
+                ".css-rrdfqm-MuiFormLabel-root-MuiInputLabel-root.Mui-focused":
+                  {
+                    color: "white",
+                  },
+              }}
             >
-              Sort By
-            </InputLabel>
-            <Select
-              sx={{ color: "white" }}
-              labelId="demo-simple-select-helper-label"
-              id="demo-simple-select-helper"
-              // value={age}
-              label="Sort By"
-              // onChange={handleChange}
+              <InputLabel
+                sx={{ color: "white" }}
+                id="demo-simple-select-helper-label"
+              >
+                Sort By
+              </InputLabel>
+              <Select
+                sx={{ color: "white"}}
+                labelId="demo-simple-select-helper-label"
+                id="demo-simple-select-helper"
+                value={selectSort}
+                label="Sort By"
+                onChange={(event) => setSelectSort(event.target.value)}
+              >
+                {sortItemList.map((value, key) => (
+                  <MenuItem key={key} value={value.value}>
+                    {value.index}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+          <Box sx={{ display: { xs: "flex", md: "none" } }}>
+            <IconButton
+              size="large"
+              aria-label="show more"
+              aria-controls={mobileMenuId}
+              aria-haspopup="true"
+              onClick={handleMobileMenuOpen}
+              color="inherit"
             >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
-            </Select>
-          </FormControl>
+              <SortIcon />
+            </IconButton>
+          </Box>
 
           <Search>
             <SearchIconWrapper>
@@ -107,10 +169,12 @@ export default function PrimarySearchAppBar() {
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
+              onChange={(event) => setSearchQuery(event.target.value)}
             />
           </Search>
         </Toolbar>
       </AppBar>
+      {renderMobileMenu}
     </Box>
   );
 }

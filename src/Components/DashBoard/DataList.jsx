@@ -1,57 +1,93 @@
-import React from 'react'
-import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import {ListItemAvatar,ListItemButton} from "@mui/material";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import FolderIcon from "@mui/icons-material/Folder";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { Divider } from '@mui/material';
+import React from 'react';
+import {
+  ListItem,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemText,
+  Typography,
+  Divider,
+  List,
+  useMediaQuery,
+  Card,
+  CardActionArea,
+  CardContent,
+  Box,
+  Container
+} from "@mui/material";
 import RomanConversion from '../Utilities/RomanConversion';
-export default function DataList({ data, setDataInfo }) {
-  console.log("datas", data);
+import { useTheme } from "@mui/material/styles";
+
+export default function DataList({data, setDataInfo, filterData }) {
+ const theme = useTheme();
+ const matches = useMediaQuery(theme.breakpoints.down("md"));
+
   return (
     <>
-      <List>
-        {data.length > 0 &&
-          data.map((list, key) => (
-            <>
-              <ListItem
-                disablePadding
-                key={key}
-                secondaryAction={
-                  <Typography variant="caption">{list.release_date}</Typography>
-                }
-              >
-                <ListItemButton onClick={(e) => setDataInfo(list)}>
-                  <ListItemAvatar>
-                    <Typography variant="body">
-                      EPISODE-{list.episode_id}
+      {!matches && (
+        <List>
+          {filterData.length > 0 &&
+            filterData.map((list, key) => (
+              <>
+                <ListItem
+                  disablePadding
+                  key={key}
+                  secondaryAction={
+                    <Typography variant="caption">
+                      {list.release_date}
                     </Typography>
-                  </ListItemAvatar>
-                  &nbsp;&nbsp;&nbsp;
-                  <ListItemText
-                    secondary={
-                      <Typography variant="body" sx={{fontSize:'large'}}>
-                 {`Episode ${RomanConversion(list.episode_id)} - ${list.title}`}
+                  }
+                >
+                  <ListItemButton onClick={(e) => setDataInfo(list)}>
+                    <ListItemAvatar>
+                      <Typography variant="body">
+                        EPISODE-{list.episode_id}
                       </Typography>
-                    }
-                  />
-                </ListItemButton>
-              </ListItem>
-              <Divider />
-            </>
-          ))}
-      </List>
+                    </ListItemAvatar>
+                    &nbsp;&nbsp;&nbsp;
+                    <ListItemText
+                      secondary={
+                        <Typography variant="body" sx={{ fontSize: "large" }}>
+                          {`Episode ${RomanConversion(list.episode_id)} - ${
+                            list.title
+                          }`}
+                        </Typography>
+                      }
+                    />
+                  </ListItemButton>
+                </ListItem>
+                <Divider />
+              </>
+            ))}
+        </List>
+      )}
+      {matches &&
+        filterData.length > 0 &&
+        filterData.map((list, key) => (
+          <Card sx={{ display: "flex" }}>
+            <CardActionArea onClick={(e) => setDataInfo(list)}>
+              <CardContent>
+                <Typography gutterBottom variant="body2" component="div">
+                  {`Episode ${RomanConversion(list.episode_id)} - ${
+                    list.title
+                  }`}
+                </Typography>
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  <Typography variant="caption">{list.release_date}</Typography>
+                </Box>
+
+                {/* <Typography variant="caption">{list.release_date}</Typography> */}
+              </CardContent>
+            </CardActionArea>
+          </Card>
+        ))}
+      {data.length === 0 && (
+        <Box sx={{ flexGrow: 1, textAlign: "center" }}>
+          <Container>
+            {" "}
+            <Typography variant="h6">No Data Found, Come back later !</Typography>{" "}
+          </Container>
+        </Box>
+      )}
     </>
   );
 }
