@@ -95,7 +95,7 @@ export default function PrimarySearchAppBar({ selectSort, setSelectSort, setSear
        onClose={handleMobileMenuClose}
      >
        {sortItemList.map((value, key) => (
-         <MenuItem
+         <MenuItem key={key}
            onClick={(event) => setSelectSort(value.value)}
          >
            <p>{value.index}</p>
@@ -104,7 +104,7 @@ export default function PrimarySearchAppBar({ selectSort, setSelectSort, setSear
      </Menu>
    );
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 1 }} data-testid="navbar">
       <AppBar position="static" sx={{ backgroundColor: "#333536" }}>
         <Toolbar>
           {!matches && (
@@ -134,7 +134,7 @@ export default function PrimarySearchAppBar({ selectSort, setSelectSort, setSear
                 Sort By
               </InputLabel>
               <Select
-                sx={{ color: "white"}}
+                sx={{ color: "white" }}
                 labelId="demo-simple-select-helper-label"
                 id="demo-simple-select-helper"
                 value={selectSort}

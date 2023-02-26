@@ -24,11 +24,12 @@ export default function DataList({data, setDataInfo, filterData }) {
   return (
     <>
       {!matches && (
-        <List>
+        <List data-testid="sortlist">
           {filterData.length > 0 &&
             filterData.map((list, key) => (
               <>
                 <ListItem
+                  data-testid={`flaky-test-case-latest-failure-${list.episode_id}`}
                   disablePadding
                   key={key}
                   secondaryAction={
@@ -84,7 +85,9 @@ export default function DataList({data, setDataInfo, filterData }) {
         <Box sx={{ flexGrow: 1, textAlign: "center" }}>
           <Container>
             {" "}
-            <Typography variant="h6">No Data Found, Come back later !</Typography>{" "}
+            <Typography variant="h6">
+              No Data Found, Come back later !
+            </Typography>{" "}
           </Container>
         </Box>
       )}
